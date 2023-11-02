@@ -43,9 +43,3 @@ pub fn find_matches(
         }
     }
 }
-
-// let's create more function
-// 1. case insensitive search
-// 2. print line numbers
-// 3. print only the matching part of the line
-// 4. invert the search, i.e. print only the lines that do not match
