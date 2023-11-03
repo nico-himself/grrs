@@ -10,7 +10,7 @@ use std::process::Command; // Run programs
  * 3. Assert that the command's stderr contains the string "No such file or directory"
  */
 fn file_dne() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("grrs")?;
+    let mut cmd = Command::cargo_bin("rcli")?;
 
     cmd.arg("grep")
         .arg("foobar")
