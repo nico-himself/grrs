@@ -12,7 +12,8 @@ use std::process::Command; // Run programs
 fn file_dne() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("grrs")?;
 
-    cmd.arg("foobar")
+    cmd.arg("grep")
+        .arg("foobar")
         .arg("test/file_dne.txt")
         .assert()
         .failure()
@@ -37,7 +38,7 @@ fn find_content_in_file() -> Result<(), Box<dyn std::error::Error>> {
     file.write_str("A test\nActual content\nMore content\nAnother test")?;
 
     let mut cmd = Command::cargo_bin("grrs")?;
-    cmd.arg("test").arg(file.path());
+    cmd.arg("grep").arg("test").arg(file.path());
     cmd.assert()
         .success()
         .stdout(predicate::str::contains("A test\nAnother test"));
@@ -59,7 +60,7 @@ fn an_empty_str() -> Result<(), Box<dyn std::error::Error>> {
 
     // Run `grrs` with the arguments `"test"` and the path to the file
     let mut cmd = Command::cargo_bin("grrs")?;
-    cmd.arg("test").arg(file.path());
+    cmd.arg("grep").arg("test").arg(file.path());
     cmd.assert().success().stdout(predicate::str::is_empty());
 
     Ok(())
@@ -72,7 +73,7 @@ fn case_insensitive_search() -> Result<(), Box<dyn std::error::Error>> {
     file.write_str("Some Text\nsome text\nAnother Text")?;
 
     let mut cmd = Command::cargo_bin("grrs")?;
-    cmd.arg("-i").arg("some").arg(file.path());
+    cmd.arg("grep").arg("-i").arg("some").arg(file.path());
     cmd.assert()
         .success()
         .stdout(predicate::str::contains("Some Text\nsome text"));
@@ -87,7 +88,7 @@ fn print_line_numbers() -> Result<(), Box<dyn std::error::Error>> {
     file.write_str("first line\nrelevant line\nlast line")?;
 
     let mut cmd = Command::cargo_bin("grrs")?;
-    cmd.arg("-n").arg("line").arg(file.path());
+    cmd.arg("grep").arg("-n").arg("line").arg(file.path());
     cmd.assert()
         .success()
         .stdout(predicate::str::contains("2:relevant line"));
@@ -102,7 +103,10 @@ fn only_matching_part_of_line() -> Result<(), Box<dyn std::error::Error>> {
     file.write_str("line with the secret code 12345")?;
 
     let mut cmd = Command::cargo_bin("grrs")?;
-    cmd.arg("-o").arg("secret code").arg(file.path());
+    cmd.arg("grep")
+        .arg("-o")
+        .arg("secret code")
+        .arg(file.path());
     cmd.assert()
         .success()
         .stdout(predicate::str::contains("secret code"));
@@ -117,7 +121,7 @@ fn invert_match() -> Result<(), Box<dyn std::error::Error>> {
     file.write_str("line one\nline two\nsomething else")?;
 
     let mut cmd = Command::cargo_bin("grrs")?;
-    cmd.arg("-v").arg("line").arg(file.path());
+    cmd.arg("grep").arg("-v").arg("line").arg(file.path());
     cmd.assert()
         .success()
         .stdout(predicate::str::contains("something else"));
